@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Engineer Portfolio - Minecraft Style</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Minecraft Theme CSS: Blocky, Pixelated Look */
+        @font-face {
+            font-family: 'BlockyFont';
+            /* Using a system monospace font as a fallback for the blocky look */
+            src: local('Courier New'), local('Monospace');
+        }
+
+        body {
+            font-family: 'BlockyFont', monospace;
+            background-color: #555555; /* Base Stone Gray */
+            background-image: url('https://placehold.co/1920x1080/7F5F40/000000/png?text=DIRT+BLOCK+TEXTURE'); /* Default background: Dirt */
+            background-size: cover;
+            background-repeat: no-repeat;
+            image-rendering: pixelated; /* Crucial for blocky icons/graphics */
+            user-select: none;
+            overflow: hidden;
+            color: #FFFFFF;
+            transition: background-image 0.5s, background-color 0.5s;
+        }
+
+        /* Utility for the pixelated effect */
+        .pixelated-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            text-shadow: 2px 2px 0px #000000; /* Shadow for pixel depth */
+        }
+
+        /* Blocky Frame/Window Style (Stone Block) */
+        .os-frame {
+            background-color: #6D6D6D; /* Stone/Cobblestone body */
+            border: 4px solid #3C3C3C; /* Darker border for depth */
+            box-shadow: 4px 4px 0px 0px #3C3C3C; /* Block shadow */
+            border-radius: 0; /* No rounding, keep it square */
+        }
+
+        /* Blocky Button Style */
+        .os-button {
+            background-color: #9E9E9E; /* Light Stone Button */
+            color: black;
+            padding: 2px 8px;
+            cursor: pointer;
+            border: 3px solid #3C3C3C;
+            box-shadow: 2px 2px 0px 0px #3C3C3C;
+            border-radius: 0;
+            transition: background-color 0.05s, transform 0.05s;
+            font-size: 1rem;
+            line-height: 1;
+            margin-right: 4px;
+        }
+
+        .os-button:hover {
+            background-color: #C0C0C0;
+            box-shadow: 1px 1px 0px 0px #3C3C3C;
+            transform: translate(1px, 1px);
+        }
+
+        .os-button:active {
+            background-color: #6D6D6D;
+            box-shadow: none;
+            transform: translate(2px, 2px);
+        }
+
+        /* Window Title Bar (Wood Plank Look) */
+        .os-title-bar {
+            background-color: #94714D; /* Wood plank color */
+            color: #F0F0F0;
+            padding: 6px 8px;
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #6D4F32;
+        }
+
+        .os-window {
+            z-index: 1000;
+            resize: both;
+            overflow: hidden;
+            min-width: 250px;
+            min-height: 200px;
+            border-radius: 0;
+        }
+        
+        /* --- DOCK (macOS/Modern Link Style) --- */
+        #taskbar {
+            /* Now acting as a centrally floating dock */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            backdrop-filter: blur(4px); /* Blur effect */
+            border: 3px solid #3C3C3C;
+            box-shadow: 4px 4px 0px 0px #3C3C3C;
+            padding: 8px 16px;
+            width: fit-content;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0; 
+            z-index: 2000;
+            position: absolute;
+            bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        #start-button {
+            /* Now the 'Home' or 'Menu' Icon in the dock */
+            background-color: #1A5229; /* Deep Grass Green */
+            box-shadow: 3px 3px 0px 0px #0D3319;
+            border: 3px solid #0D3319;
+            color: white;
+            padding: 6px 10px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        #start-button:hover {
+            background-color: #24753F;
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px #0D3319;
+        }
+
+        .taskbar-item {
+            background-color: #6D6D6D;
+            border: 2px solid #3C3C3C;
+            box-shadow: 2px 2px 0px 0px #3C3C3C;
+            line-height: 1;
+            padding: 4px 8px;
+            transition: background-color 0.1s, transform 0.1s;
+        }
+        .taskbar-item:hover {
+            background-color: #9E9E9E;
+            transform: translateY(-2px); /* Lift effect */
+        }
+        .taskbar-item.minimized {
+            background-color: #4A4A4A;
+            color: #AAAAAA;
+        }
+
+        /* Icon Styling */
+        .icon-text {
+            color: #FFF;
+            text-shadow: 1px 1px 0 #000;
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2px;
+        }
+
+        /* Status Menu (Top Bar) */
+        #status-bar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 8px;
+            z-index: 2000;
+        }
+
+        #status-menu {
+            border: 3px solid #3C3C3C;
+            box-shadow: 4px 4px 0px 0px #3C3C3C;
+            background-color: #6D6D6D; /* Stone Block */
+        }
+        
+        #status-menu a, #status-menu button {
+            transition: background-color 0.1s;
+        }
+        #status-menu a:hover, #status-menu button:hover {
+            background-color: #1A5229; /* Grass Green Hover */
+        }
+        
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <!-- Desktop Area -->
+    <div id="desktop" class="flex-grow relative p-4" onclick="closeAllMenus(event)">
+
+        <!-- System Status Bar (Top Right) -->
+        <div id="status-bar" class="pixelated-text">
+            <button class="text-white hover:text-yellow-300" onclick="toggleStatusMenu(event)">
+                <span id="time-display" class="mr-3">12:00 PM</span> | <span id="date-display">Dec 05</span>
+            </button>
+            
+            <!-- Status Menu Dropdown -->
+            <div id="status-menu" class="absolute right-0 top-10 w-64 hidden z-[3000] pixelated-text">
+                <div class="p-3 text-sm">
+                    <div class="py-1 px-2 text-center text-lg font-bold text-white border-b border-black mb-2">
+                        System Links
+                    </div>
+                    <a href="https://github.com/your-profile" target="_blank" class="block p-2 hover:bg-green-600 hover:text-white cursor-pointer">
+                        <span class="mr-2">G</span> GitHub
+                    </a>
+                    <a href="https://twitter.com/your-profile" target="_blank" class="block p-2 hover:bg-green-600 hover:text-white cursor-pointer">
+                        <span class="mr-2">T</span> Twitter
+                    </a>
+                    <a href="https://linkedin.com/in/your-profile" target="_blank" class="block p-2 hover:bg-green-600 hover:text-white cursor-pointer">
+                        <span class="mr-2">L</span> LinkedIn
+                    </a>
+                    <hr class="my-2 border-black">
+                    <button onclick="console.log('Simulated Log Off: Refresh the page to restart the block.');" class="w-full text-left p-2 bg-red-700 hover:bg-red-600 text-white cursor-pointer">
+                        Quit Block
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Icon: About Me -->
+        <div id="icon-about" 
+            class="icon-draggable absolute top-5 left-5 w-20 flex flex-col items-center cursor-pointer mb-6 pixelated-text" 
+            ondblclick="openWindow('about')"
+            onmousedown="startIconDrag(event, 'icon-about')"
+            ontouchstart="startIconDrag(event, 'icon-about')">
+            <img src="https://placehold.co/40x40/94714D/FFFFFF/png?text=P" alt="Portfolio" class="mb-1 os-frame rounded-md" style="image-rendering: pixelated;"/>
+            <span class="text-xs text-center icon-text">Portfolio</span>
+        </div>
+
+        <!-- Icon: Skills -->
+        <div id="icon-skills" 
+            class="icon-draggable absolute top-32 left-5 w-20 flex flex-col items-center cursor-pointer mb-6 pixelated-text" 
+            ondblclick="openWindow('skills')"
+            onmousedown="startIconDrag(event, 'icon-skills')"
+            ontouchstart="startIconDrag(event, 'icon-skills')">
+            <img src="https://placehold.co/40x40/9E9E9E/000000/png?text=S" alt="Skills" class="mb-1 os-frame rounded-md" style="image-rendering: pixelated;"/>
+            <span class="text-xs text-center icon-text">Skills.txt</span>
+        </div>
+
+        <!-- Icon: Projects -->
+        <div id="icon-projects" 
+            class="icon-draggable absolute top-5 left-32 w-20 flex flex-col items-center cursor-pointer mb-6 pixelated-text" 
+            ondblclick="openWindow('projects')"
+            onmousedown="startIconDrag(event, 'icon-projects')"
+            ontouchstart="startIconDrag(event, 'icon-projects')">
+            <img src="https://placehold.co/40x40/1A5229/FFFFFF/png?text=W" alt="Projects" class="mb-1 os-frame rounded-md" style="image-rendering: pixelated;"/>
+            <span class="text-xs text-center icon-text">Work_Dir</span>
+        </div>
+
+        <!-- Icon: Terminal Access -->
+        <div id="icon-terminal" 
+            class="icon-draggable absolute top-32 left-32 w-20 flex flex-col items-center cursor-pointer mb-6 pixelated-text" 
+            ondblclick="openWindow('terminal')"
+            onmousedown="startIconDrag(event, 'icon-terminal')"
+            ontouchstart="startIconDrag(event, 'icon-terminal')">
+            <img src="https://placehold.co/40x40/000000/00FF00/png?text=_" alt="Terminal" class="mb-1 os-frame rounded-md" style="image-rendering: pixelated;"/>
+            <span class="text-xs text-center icon-text">Console</span>
+        </div>
+
+        <!-- --- WINDOW TEMPLATES --- -->
+
+        <!-- Window: About Me (Portfolio) -->
+        <div id="window-about" class="os-window absolute hidden" style="width: 450px; height: 300px; top: 50px; left: 350px;">
+            <div class="os-title-bar pixelated-text" onmousedown="startDrag(event, 'about')">
+                <span>[Engineer Block]</span>
+                <div class="flex space-x-1">
+                    <button class="os-button" onclick="minimizeWindow('about')">-</button>
+                    <button class="os-button" onclick="maximizeWindow('about')">#</button>
+                    <button class="os-button bg-red-500 hover:bg-red-400" onclick="closeWindow('about')">X</button>
+                </div>
+            </div>
+            <div class="p-4 text-sm overflow-auto h-[calc(100%-40px)] text-black bg-gray-300">
+                <h2 class="text-xl font-bold mb-3 text-black pixelated-text">About The Block System</h2>
+                <p class="mb-3">
+                    Hello! I'm a dedicated Backend Engineer specializing in crafting robust, scalable, and high-performance server blocks. My focus is on writing clean, efficient, and well-tested code to power complex structures in the digital realm.
+                </p>
+                <p class="mb-3">
+                    I thrive on tackling infrastructure challenges, optimizing database performance (for maximum storage blocks), and building resilient APIs.
+                </p>
+                <p>
+                    <span class="font-semibold text-green-700">Status:</span> Mining successfully. Ready to craft your next project.
+                </p>
+            </div>
+        </div>
+
+        <!-- Window: Skills -->
+        <div id="window-skills" class="os-window absolute hidden" style="width: 500px; height: 400px; top: 80px; left: 450px;">
+            <div class="os-title-bar pixelated-text" onmousedown="startDrag(event, 'skills')">
+                <span>Skills.txt - Block Editor</span>
+                <div class="flex space-x-1">
+                    <button class="os-button" onclick="minimizeWindow('skills')">-</button>
+                    <button class="os-button" onclick="maximizeWindow('skills')">#</button>
+                    <button class="os-button bg-red-500 hover:bg-red-400" onclick="closeWindow('skills')">X</button>
+                </div>
+            </div>
+            <div class="p-3 text-sm overflow-auto h-[calc(100%-40px)] font-mono whitespace-pre bg-[#1C1C1C] text-green-400 pixelated-text">
+                <pre class="whitespace-pre-wrap">
+# Core Mining Languages
+lang:
+  - Python: Expert (Redstone Automation)
+  - Rust: Advanced (High-Speed Piston Logic)
+  - JS/TS: Intermediate (Client-side UI Crafting)
+
+# Construction Frameworks
+tools:
+  - Django: Secure API Walls, Vaults.
+  - FastAPI: High-throughput smelting furnaces.
+  - Node.js: Lightweight traps and redstone lines.
+
+# Foundational Blocks
+infra:
+  - DBs: PostgreSQL, Redis (Loot Chests)
+  - DevOps: Docker, Kubernetes (Farm Automation)
+  - Cloud: AWS/GCP (World Hosting)
+                </pre>
+            </div>
+        </div>
+
+        <!-- Window: Projects -->
+        <div id="window-projects" class="os-window absolute hidden" style="width: 600px; height: 350px; top: 120px; left: 550px;">
+            <div class="os-title-bar pixelated-text" onmousedown="startDrag(event, 'projects')">
+                <span>Work_Dir - World Navigator</span>
+                <div class="flex space-x-1">
+                    <button class="os-button" onclick="minimizeWindow('projects')">-</button>
+                    <button class="os-button" onclick="maximizeWindow('projects')">#</button>
+                    <button class="os-button bg-red-500 hover:bg-red-400" onclick="closeWindow('projects')">X</button>
+                </div>
+            </div>
+            <div class="p-4 text-sm overflow-auto h-[calc(100%-40px)] text-black bg-gray-300">
+                <p class="mb-3 font-bold text-lg text-black border-b border-gray-600 pb-1 pixelated-text">Worlds Built</p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-3 os-frame bg-gray-400 hover:bg-gray-500 transition duration-150">
+                        <span class="font-bold text-blue-800 block text-base pixelated-text">ScalePilot World</span>
+                        <p class="text-xs mt-1 text-gray-800">
+                            <span class="font-semibold">Blocks:</span> FastAPI, Redis.<br>
+                            <span class="font-semibold">Desc:</span> High-throughput microservice for real-time item transport (10,000 items/tick).
+                        </p>
+                    </div>
+                    <div class="p-3 os-frame bg-gray-400 hover:bg-gray-500 transition duration-150">
+                        <span class="font-bold text-blue-800 block text-base pixelated-text">AuthChain Land</span>
+                        <p class="text-xs mt-1 text-gray-800">
+                            <span class="font-semibold">Blocks:</span> Rust, Blockchain.<br>
+                            <span class="font-semibold">Desc:</span> Secure, decentralized identity ledger using custom Rust validator tools.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Window: Terminal -->
+        <div id="window-terminal" class="os-window absolute hidden" style="width: 650px; height: 450px; top: 180px; left: 600px;">
+            <div class="os-title-bar bg-black border-none" onmousedown="startDrag(event, 'terminal')">
+                <span class="font-bold text-green-400 pixelated-text">CRAFT: Console Access</span>
+                <div class="flex space-x-1">
+                    <button class="os-button bg-gray-800 hover:bg-gray-700 text-white" onclick="minimizeWindow('terminal')">-</button>
+                    <button class="os-button bg-gray-800 hover:bg-gray-700 text-white" onclick="maximizeWindow('terminal')">#</button>
+                    <button class="os-button bg-red-700 hover:bg-red-600 text-white" onclick="closeWindow('terminal')">X</button>
+                </div>
+            </div>
+            <div class="p-2 text-sm h-[calc(100%-40px)] flex flex-col font-mono text-green-500 bg-black">
+                <div id="terminal-content-terminal" class="flex-grow overflow-y-auto pb-2 pixelated-text">
+                    <div>> System initialized. Ready to accept crafting recipes.</div>
+                    <div>> Type 'help' for available commands.</div>
+                    <div class="my-1"></div>
+                </div>
+                <div class="flex items-center">
+                    <span class="pixelated-text">> user@mine-server:~$</span>
+                    <input id="terminal-input-terminal" type="text" class="flex-grow bg-transparent border-none outline-none text-green-400 ml-1 p-0 pixelated-text" onkeydown="if(event.key === 'Enter') handleTerminalInput('terminal')" autofocus />
+                </div>
+            </div>
+        </div>
+        
+        <!-- Window: Settings (Wallpaper Upload) -->
+        <div id="window-settings" class="os-window absolute hidden" style="width: 450px; height: 300px; top: 150px; left: 100px;">
+            <div class="os-title-bar pixelated-text" onmousedown="startDrag(event, 'settings')">
+                <span>Block Settings</span>
+                <div class="flex space-x-1">
+                    <button class="os-button" onclick="minimizeWindow('settings')">-</button>
+                    <button class="os-button" onclick="maximizeWindow('settings')">#</button>
+                    <button class="os-button bg-red-500 hover:bg-red-400" onclick="closeWindow('settings')">X</button>
+                </div>
+            </div>
+            <div class="p-4 text-sm overflow-auto h-[calc(100%-40px)] text-black bg-gray-300">
+                <h2 class="text-xl font-bold mb-3 text-black pixelated-text">World Background Customizer</h2>
+                
+                <label for="wallpaper-url" class="block mb-2 font-semibold">Upload Custom Texture (Image URL):</label>
+                <input id="wallpaper-url" type="url" placeholder="e.g. https://yourimage.com/texture.jpg" class="w-full p-2 mb-4 bg-gray-100 border-4 border-gray-500 focus:border-green-600 text-black">
+                <button class="os-button bg-green-600 hover:bg-green-500 text-white" onclick="setCustomWallpaper()">Apply Custom Texture</button>
+                
+                <hr class="my-4 border-gray-600">
+
+                <label for="wallpaper-select" class="block mb-2 font-semibold">Default Textures:</label>
+                <select id="wallpaper-select" class="w-full p-2 bg-gray-400 border-4 border-gray-500 text-black" onchange="setWallpaper(this.value)">
+                    <option value="dirt">Dirt Block (Default)</option>
+                    <option value="stone">Stone Block</option>
+                    <option value="grass">Grass Block</option>
+                    <option value="nether">Netherack (Dark)</option>
+                </select>
+                <p class="mt-4 text-xs text-gray-500">Note: Use high-resolution, simple images for best blocky effect.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DOCK (macOS/Modern Style) -->
+    <div id="taskbar" class="pixelated-text">
+
+        <!-- Start/Menu Button -->
+        <button id="start-button" class="h-8 flex items-center text-white mr-4 rounded-md os-button" onclick="toggleStartMenu()">
+            <span class="mr-1">M</span>ENU
+        </button>
+
+        <!-- Taskbar Window List (App Icons) -->
+        <div id="taskbar-windows" class="flex space-x-2 h-8 items-center overflow-x-auto">
+            <!-- Minimized window items will appear here -->
+        </div>
+    </div>
+
+    <!-- Start Menu (Context Menu) -->
+    <div id="start-menu" class="absolute left-0 bottom-20 w-64 hidden z-[3000] os-frame pixelated-text">
+        <div class="p-2 text-sm">
+            <div class="py-1 px-2 border-b border-black mb-1 text-yellow-300">
+                <p class="font-bold text-lg">CRAFT MENU</p>
+                <p class="text-xs">Select your block.</p>
+            </div>
+            <div class="flex flex-col">
+                <div class="p-2 hover:bg-green-600 hover:text-white cursor-pointer" onclick="openWindow('about'); toggleStartMenu()">
+                    [P]ortfolio Info
+                </div>
+                <div class="p-2 hover:bg-green-600 hover:text-white cursor-pointer" onclick="openWindow('skills'); toggleStartMenu()">
+                    [S]kills.txt
+                </div>
+                <div class="p-2 hover:bg-green-600 hover:text-white cursor-pointer" onclick="openWindow('projects'); toggleStartMenu()">
+                    [W]orld Directory
+                </div>
+                <div class="p-2 hover:bg-green-600 hover:text-white cursor-pointer" onclick="openWindow('terminal'); toggleStartMenu()">
+                    [C]onsole Access
+                </div>
+                <hr class="my-2 border-black">
+                <div class="p-2 hover:bg-green-600 hover:text-white cursor-pointer" onclick="openWindow('settings'); toggleStartMenu()">
+                    [G]raphic Settings
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCK CONTEXT MENU (Right-Click Menu for Apps) -->
+    <div id="dock-context-menu" class="absolute hidden z-[4000] os-frame pixelated-text" style="width: 180px;">
+        <!-- Content injected by JS -->
+    </div>
+
+
+    <script>
+        // State management
+        const windows = {};
+        let zIndexCounter = 1000;
+        const desktop = document.getElementById('desktop');
+        const taskbarWindows = document.getElementById('taskbar-windows');
+        const body = document.body;
+
+        // Dragging state
+        let activeElement = null;
+        let offset = { x: 0, y: 0 };
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
+
+        // Wallpaper definitions (using placeholder image URLs for block textures)
+        const wallpapers = {
+            dirt: 'url(https://placehold.co/1920x1080/7F5F40/000000/png?text=DIRT+BLOCK+TEXTURE)',
+            stone: 'url(https://placehold.co/1920x1080/6D6D6D/000000/png?text=STONE+BLOCK+TEXTURE)',
+            grass: 'url(https://placehold.co/1920x1080/1A5229/FFFFFF/png?text=GRASS+BLOCK+TEXTURE)',
+            nether: 'url(https://placehold.co/1920x1080/630000/FFFFFF/png?text=NETHERACK+TEXTURE)',
+        };
+
+        // --- Core Functions ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize windows object
+            document.querySelectorAll('.os-window').forEach(el => {
+                const id = el.id.replace('window-', '');
+                windows[id] = {
+                    element: el,
+                    isMinimized: false,
+                    isMaximized: false,
+                    originalPosition: { top: el.style.top, left: el.style.left, width: el.style.width, height: el.style.height },
+                    taskbarItem: null
+                };
+            });
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+        
+        // Sets wallpaper from predefined keys
+        function setWallpaper(key) {
+            body.style.backgroundImage = wallpapers[key] || wallpapers.dirt;
+            body.style.backgroundSize = 'cover';
+            body.style.backgroundRepeat = 'no-repeat';
+        }
+        
+        // Handles custom wallpaper URL upload
+        function setCustomWallpaper() {
+            const url = document.getElementById('wallpaper-url').value.trim();
+            if (url) {
+                body.style.backgroundImage = `url('${url}')`;
+                body.style.backgroundSize = 'cover';
+                body.style.backgroundRepeat = 'no-repeat';
+                closeWindow('settings');
+            } else {
+                console.error("Please enter a valid image URL.");
+            }
+        }
+
+        // --- Menu Management ---
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            document.getElementById('time-display').textContent = timeString;
+            document.getElementById('date-display').textContent = dateString;
+        }
+
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('start-menu');
+            startMenu.classList.toggle('hidden');
+            document.getElementById('status-menu').classList.add('hidden'); // Close status menu
+            document.getElementById('dock-context-menu').classList.add('hidden'); // Close dock menu
+        }
+
+        function toggleStatusMenu(e) {
+            e.stopPropagation(); 
+            const statusMenu = document.getElementById('status-menu');
+            statusMenu.classList.toggle('hidden');
+            document.getElementById('start-menu').classList.add('hidden'); // Close start menu
+            document.getElementById('dock-context-menu').classList.add('hidden'); // Close dock menu
+        }
+        
+        function closeAllMenus(e) {
+            // Close menus unless the click was on a menu trigger
+            if (!e.target.closest('#taskbar')) {
+                document.getElementById('start-menu').classList.add('hidden');
+            }
+            if (!e.target.closest('#status-bar')) {
+                document.getElementById('status-menu').classList.add('hidden');
+            }
+            // Hide the dock context menu if clicking anywhere else
+            const dockMenu = document.getElementById('dock-context-menu');
+            if (dockMenu && !e.target.closest('#dock-context-menu')) {
+                 dockMenu.classList.add('hidden');
+            }
+        }
+
+        function showDockContextMenu(e, id) {
+            e.preventDefault(); // Prevent default browser context menu
+            e.stopPropagation(); // Prevent closing other menus immediately
+
+            const menu = document.getElementById('dock-context-menu');
+            const win = windows[id];
+            if (!win) return;
+
+            // Close other menus
+            document.getElementById('start-menu').classList.add('hidden');
+            document.getElementById('status-menu').classList.add('hidden');
+
+            // Populate the menu
+            const isVisible = !win.element.classList.contains('hidden');
+            const actionText = isVisible && !win.isMinimized ? 'Minimize Block' : 'Open/Focus Block';
+            
+            menu.innerHTML = `
+                <div class="p-1 text-sm">
+                    <div class="py-1 px-2 border-b border-black mb-1 text-yellow-300">
+                        <p class="font-bold text-lg">${id.toUpperCase()}</p>
+                    </div>
+                    <div class="p-2 hover:bg-green-600 hover:text-white cursor-pointer" 
+                         onclick="minimizeWindow('${id}'); document.getElementById('dock-context-menu').classList.add('hidden');">
+                        ${actionText}
+                    </div>
+                    <div class="p-2 hover:bg-red-600 hover:text-white cursor-pointer" 
+                         onclick="closeWindow('${id}'); document.getElementById('dock-context-menu').classList.add('hidden');">
+                        Close Block (X)
+                    </div>
+                </div>
+            `;
+            
+            // Position the menu slightly above and to the right of the click location
+            let x = e.clientX;
+            let y = e.clientY;
+            
+            // Adjust position if menu goes off the right edge (180px width + 10px buffer)
+            if (x + 190 > window.innerWidth) {
+                x = window.innerWidth - 190;
+            }
+            // Adjust position if menu goes off the bottom edge (place above the dock)
+            const dockHeight = document.getElementById('taskbar').offsetHeight;
+            y = window.innerHeight - dockHeight - menu.offsetHeight - 10;
+            
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            menu.classList.remove('hidden');
+        }
+
+
+        // --- Window Management ---
+
+        function openWindow(id) {
+            const win = windows[id];
+            if (!win) return;
+
+            win.element.classList.remove('hidden');
+            win.isMinimized = false;
+            focusWindow(id);
+
+            // Taskbar Item Logic (Dock Icon)
+            if (!win.taskbarItem) {
+                const taskbarItem = document.createElement('button');
+                taskbarItem.id = `taskbar-item-${id}`;
+                taskbarItem.className = 'taskbar-item text-white pixelated-text hover:text-yellow-300 ml-2';
+                taskbarItem.textContent = id.toUpperCase();
+                taskbarItem.onclick = () => minimizeWindow(id);
+                taskbarItem.oncontextmenu = (e) => showDockContextMenu(e, id); // Add right-click listener
+                taskbarWindows.appendChild(taskbarItem);
+                win.taskbarItem = taskbarItem;
+            } else {
+                win.taskbarItem.classList.remove('minimized');
+            }
+        }
+
+        function closeWindow(id) {
+            const win = windows[id];
+            if (!win) return;
+
+            win.element.classList.add('hidden');
+            // Ensure maximization state is reset before removing
+            win.isMaximized = false; 
+            Object.assign(win.element.style, win.originalPosition);
+            win.element.style.removeProperty('width');
+            win.element.style.removeProperty('height');
+
+            if (win.taskbarItem) {
+                win.taskbarItem.remove();
+                win.taskbarItem = null;
+            }
+            // Hide context menu if closing the associated app
+            document.getElementById('dock-context-menu').classList.add('hidden');
+        }
+
+        function minimizeWindow(id) {
+            const win = windows[id];
+            if (!win) return;
+
+            if (win.isMinimized) {
+                win.element.classList.remove('hidden');
+                win.isMinimized = false;
+                win.taskbarItem.classList.remove('minimized');
+                focusWindow(id);
+            } else {
+                win.element.classList.add('hidden');
+                win.isMinimized = true;
+                win.taskbarItem.classList.add('minimized');
+            }
+        }
+
+        function maximizeWindow(id) {
+            const win = windows[id];
+            if (!win) return;
+
+            if (win.isMaximized) {
+                Object.assign(win.element.style, win.originalPosition);
+                win.isMaximized = false;
+            } else {
+                // Save current position
+                win.originalPosition.top = win.element.style.top;
+                win.originalPosition.left = win.element.style.left;
+                win.originalPosition.width = win.element.style.width;
+                win.originalPosition.height = win.element.style.height;
+
+                // Maximize to full desktop area (minus status bar allowance)
+                win.element.style.top = '0px';
+                win.element.style.left = '0px';
+                win.element.style.width = `${desktop.clientWidth}px`;
+                win.element.style.height = `${desktop.clientHeight}px`;
+
+                win.isMaximized = true;
+            }
+            focusWindow(id);
+        }
+
+        function focusWindow(id) {
+            const win = windows[id];
+            if (!win) return;
+            win.element.style.zIndex = ++zIndexCounter;
+            
+            if (id === 'terminal') {
+                document.getElementById('terminal-input-terminal').focus();
+            }
+        }
+
+        // --- Dragging Functionality for Windows and Icons ---
+
+        function getClientCoords(e) {
+            if (isTouchDevice && e.touches) {
+                return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+            }
+            return { clientX: e.clientX, clientY: e.clientY };
+        }
+
+        function startDrag(e, id) {
+            e.preventDefault();
+            const win = windows[id];
+            if (!win) return; 
+            
+            if (win.isMaximized) return;
+
+            if (e.target.closest('.os-button')) return;
+
+            activeElement = win.element;
+            focusWindow(id);
+            
+            const coords = getClientCoords(e);
+
+            offset = {
+                x: coords.clientX - activeElement.offsetLeft,
+                y: coords.clientY - activeElement.offsetTop
+            };
+
+            activeElement.querySelector('.os-title-bar').style.cursor = 'grabbing';
+            attachDragListeners();
+        }
+
+        function startIconDrag(e, id) {
+            e.preventDefault();
+            const icon = document.getElementById(id);
+            if (!icon) return;
+
+            activeElement = icon;
+            
+            const coords = getClientCoords(e);
+
+            offset = {
+                x: coords.clientX - activeElement.offsetLeft,
+                y: coords.clientY - activeElement.offsetTop
+            };
+
+            attachDragListeners();
+        }
+        
+        function attachDragListeners() {
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchmove', dragMove, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragMove(e) {
+            if (!activeElement) return;
+            e.preventDefault();
+
+            const coords = getClientCoords(e);
+            
+            let newX = coords.clientX - offset.x;
+            let newY = coords.clientY - offset.y;
+
+            // Boundary checks (prevent dragging outside the desktop area)
+            const desktopRect = desktop.getBoundingClientRect();
+
+            newX = Math.max(0, Math.min(newX, desktopRect.width - activeElement.offsetWidth));
+            newY = Math.max(0, Math.min(newY, desktopRect.height - activeElement.offsetHeight));
+
+            activeElement.style.left = newX + 'px';
+            activeElement.style.top = newY + 'px';
+        }
+
+        function dragEnd() {
+            if (activeElement) {
+                const titleBar = activeElement.querySelector('.os-title-bar');
+                if (titleBar) {
+                     titleBar.style.cursor = 'grab';
+                }
+                activeElement = null;
+            }
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchmove', dragMove);
+            document.removeEventListener('touchend', dragEnd);
+        }
+        
+        // --- Terminal Functionality ---
+
+        function handleTerminalInput(id) {
+            const terminal = document.getElementById(`terminal-content-${id}`);
+            const inputField = document.getElementById(`terminal-input-${id}`);
+            const command = inputField.value.trim().toLowerCase();
+            inputField.value = '';
+            inputField.focus();
+
+            const newLine = (text, isError = false) => {
+                const line = document.createElement('div');
+                line.textContent = text;
+                line.className = isError ? 'text-red-400' : 'text-green-400';
+                terminal.appendChild(line);
+                terminal.scrollTop = terminal.scrollHeight; 
+            };
+
+            newLine(`> user@mine-server:~$ ${command}`);
+
+            switch (command) {
+                case 'help':
+                    newLine('Available Commands (Type the recipe name):');
+                    newLine('  whoami        - Check the engineer block stats.');
+                    newLine('  list_projects - View available world maps.');
+                    newLine('  ping 8.8.8.8  - Test network connectivity.');
+                    newLine('  clear         - Clear the console.');
+                    break;
+                case 'whoami':
+                    newLine('Block Type: Principal Backend Engineer.');
+                    newLine('Current Ore: Rust, Python.');
+                    newLine('Mining Rate: High Scalability/Low Latency.');
+                    break;
+                case 'list_projects':
+                    newLine('World Maps Found:');
+                    newLine('  - ScalePilot World (FastAPI/Redis)');
+                    newLine('  - AuthChain Land (Rust/Blockchain)');
+                    break;
+                case 'ping 8.8.8.8':
+                    newLine('Attempting connection...');
+                    newLine('Reply from 8.8.8.8: time=1ms. Chunk loaded.');
+                    newLine('Reply from 8.8.8.8: time=2ms. Chunk loaded.');
+                    break;
+                case 'clear':
+                    terminal.innerHTML = '';
+                    newLine('> System initialized. Ready to accept crafting recipes.');
+                    newLine('> Type "help" for available commands.');
+                    break;
+                default:
+                    if (command) {
+                        newLine(`Error: Unknown crafting recipe '${command}'. Use 'help'.`, true);
+                    }
+                    break;
+            }
+            newLine(''); 
+        }
+
+    </script>
+</body>
+</html>
